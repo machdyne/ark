@@ -2,7 +2,7 @@
 
 BUILD=$PWD/build
 ARK=$PWD/ark
-DATA=$PWD/DATA
+DATA=$PWD/data
 
 mkdir -p $BUILD
 mkdir -p $ARK
