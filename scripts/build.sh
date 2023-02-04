@@ -11,7 +11,7 @@ mkdir -p $ARK
 git lfs pull
 
 # Wikipedia 2008 "Vital" Ark Snapshot
-tar -Jxvf data/wikiark.txz -C $ARK
+tar -Jxvf data/wiki2008.txz -C $ARK
 
 # Project Gutenberg 2003 CDROM
 mkdir -p $ARK/gutenberg

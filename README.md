@@ -35,13 +35,14 @@ The `ark` script is included for browsing and reading the content.
 ```
 $ . scripts/ark browse wp 
 $ . scripts/ark search pg moby
+$ . scripts/ark read pg 355
 ```
 
 ### Install
 
 #### Generic Installation
 
-The following will copy the data to `/opt/ark` and install the `ark` script:
+The following commands will copy the data to `/opt/ark` and install the `ark` script:
 
 ```
 $ chmod +x scripts/ark
