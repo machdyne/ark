@@ -11,6 +11,7 @@ This is the list of currently included information:
   * Project Gutenberg CD-ROM (~600 books) [2003]
   * Wikipedia (~10K "vital" articles) [2008]
   * CIA World Factbook with world map images [2010]
+  * MedlinePlus Health Topics [2024]
 
 ## Building
 
@@ -72,3 +73,5 @@ This repo including the documentation, scripts and metadata not included below a
 The content from Wikipedia is released under the [Creative Commons Attribution-ShareAlike 3.0 Unported License](https://creativecommons.org/licenses/by-sa/3.0/).
 
 The content from Project Gutenberg is believed to be in the public domain, but we make no guarantees that this is the case and it is up to you to verify copyright status and to understand the copyright laws in your country.
+
+The content from MedlinePlus is product of the National Library of Medicine (NLM), which is part of the National Institutes of Health (NIH), and is believed to be in the public domain.

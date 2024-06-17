@@ -27,3 +27,7 @@ mkdir -p $ARK/gutenberg/cia
 wget -nc -P $ARK/gutenberg/cia https://www.gutenberg.org/files/35830/35830.txt
 wget -nc -P $BUILD/ciaimg.zip https://www.gutenberg.org/files/35830/35830-images.zip
 7z x -y -o$ARK/gutenberg/cia $BUILD/ciaimg.zip
+
+# MedlinePlus
+mkdir -p $ARK/medline
+tar -xvf data/medline-2024-06-15.tgz -C $ARK
