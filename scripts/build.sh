@@ -31,3 +31,9 @@ wget -nc -P $BUILD/ciaimg.zip https://www.gutenberg.org/files/35830/35830-images
 # MedlinePlus
 mkdir -p $ARK/medline
 tar -xvf data/medline-2024-06-15.tgz -C $ARK
+
+# Copy Ark Lite
+cp -R data/arklite $ARK
+
+# Copy Ark Scroll
+cp -R data/scroll.gz $ARK
