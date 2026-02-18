@@ -58,7 +58,7 @@ Copy data/arklite to /opt/ark/arklite.
 ### Install Prerequisties
 
 ```
-$ sudo apt install wget 7z git-lfs links
+$ sudo apt install wget 7zip git-lfs links
 ```
 
 ### Download & Process
