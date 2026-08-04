@@ -26,7 +26,7 @@ The Ark Codex is organized as several hundred topic directories (see `data/arkli
 
 ### Ark Lite
 
-Ark Lite is intended to fit on an [FERRIT-1](https://github.com/machdyne/ferrit) with 8MB of [FRAM](https://en.wikipedia.org/wiki/Ferroelectric_RAM).
+Ark Lite is intended to fit on a [FERRIT-1](https://github.com/machdyne/ferrit) with 8MB of [FRAM](https://en.wikipedia.org/wiki/Ferroelectric_RAM).
 
 Ark Lite contains the Ark Codex plus additional hand-selected texts. (see `data/arklite`)
 
