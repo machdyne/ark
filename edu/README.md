@@ -5,9 +5,14 @@ Courses for **learn**, the lesson app of
 languages and life skills, for offline computers. Every course is CC0
 and names its authors.
 
+**Write a course with your spare AI tokens:** pick one from the map,
+send Claude (or your own agent) a two-line prompt, and it writes,
+checks and fact-checks the course for you to submit. See
+[CONTRIBUTING.md](CONTRIBUTING.md).
+
 - [curriculum.md](curriculum.md) is the map the courses are written
   against: every course's place, level, units, review class and
-  prerequisites. No course on it is written yet.
+  prerequisites. Written so far: `math-3`.
 - The format, the checks and the app are Zeitlos's:
   [learn_format.md](https://github.com/machdyne/zeitlos/blob/main/docs/learn_format.md)
   (the course format and the review classes),
@@ -24,7 +29,9 @@ and names its authors.
 ```
 edu/
   README.md          this
+  CONTRIBUTING.md    how to write and submit a course
   curriculum.md      the map
+  briefs/            what the agents that write and check a course follow
   lib/*.scm          optional: figure procedures every course of a pack can use
   <course-id>/       a course, exactly as learn reads it: course.cfg, index.md,
                      numbered parts, units and lessons (learn_format.md)
@@ -57,7 +64,8 @@ card has it (`/opt/ark/<pack>/`), which `release/` ships.
 
 ## Before a course is added
 
-The steps in `learn_authoring.md`: an outline reviewed first; the
+The steps in `learn_authoring.md` (which [CONTRIBUTING.md](CONTRIBUTING.md)
+and [briefs/](briefs/) carry out): an outline reviewed first; the
 lessons; `learncheck` with no errors or warnings, `terms.py` with no
 warnings, every step looked at in `tools/learn/preview`; an independent
 fact-check; and a person's review (a qualified one for class B) in
