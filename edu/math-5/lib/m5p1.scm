@@ -1,0 +1,133 @@
+; math-5 part 1 figures, prefix m5p1-
+
+; 40306 -> "40,306"
+(define (m5p1-num n)
+ (let loop ((n (round n)) (s ""))
+  (if (< n 1000) (string-append (fmt n 0) s)
+   (let* ((q (floor (/ n 1000))) (r (- n (* q 1000))))
+    (loop q (string-append "," (if (< r 10) "00" (if (< r 100) "0" "")) (fmt r 0) s))))))
+
+; digit of n in place k (-3..6)
+(define (m5p1-d m k) (let ((q (floor (/ m (expt 10 k))))) (- q (* 10 (floor (/ q 10))))))
+(define (m5p1-dig n k)
+ (if (< k 0) (m5p1-d (round (* 1000 (- n (floor n)))) (+ k 3)) (m5p1-d (floor n) k)))
+(define (m5p1-top n) (let loop ((k 0)) (if (>= (+ n 0.0000001) (expt 10 (+ k 1))) (loop (+ k 1)) k)))
+
+; chart hi..lo at y: n's digits down to dlo, mk framed
+(define m5p1-heads '(("thou-" "sandths") ("" "hundredths") ("" "tenths") ("" "ones") ("" "tens")
+ ("" "hundreds") ("" "thousands") ("ten" "thousands") ("hundred" "thousands") ("" "millions")))
+(define (m5p1-w hi lo) (min 56 (floor (/ 310 (+ 1 (- hi lo))))))
+(define (m5p1-cx k hi lo)
+ (let ((w (m5p1-w hi lo))) (+ (- 160 (/ (* w (+ 1 (- hi lo))) 2)) (* w (- hi k)) (/ w 2))))
+(define (m5p1-chart y n hi lo dlo mk)
+ (let* ((c (+ 1 (- hi lo))) (w (m5p1-w hi lo)) (x0 (- 160 (/ (* w c) 2))) (tp (m5p1-top n)))
+  (frame x0 y (* w c) 64 'ink 1.5)
+  (line x0 (+ y 26) (+ x0 (* w c)) (+ y 26) 'ink 1)
+  (for-range 0 c
+   (lambda (i)
+    (let* ((k (- hi i)) (xi (+ x0 (* w i))) (cx (+ xi (/ w 2))) (h (list-ref m5p1-heads (+ k 3))))
+     (if (> i 0) (line xi y xi (+ y 64) 'ink (if (= k -1) 2.5 1)))
+     (label cx (+ y 10) (car h) 'tiny)
+     (label cx (+ y 21) (cadr h) 'tiny)
+     (if (and (<= k tp) (>= k dlo)) (label cx (+ y 54) (fmt (m5p1-dig n k) 0) 'big 'bold))
+     (if (= k mk) (frame xi y w 64 'ink 3)))))
+  (if (and (< lo 0) (>= hi 0)) (circle (+ x0 (* w (+ 1 hi))) (+ y 50) 3.5 'ink))))
+
+; n at y1, n x 10^p at y2, arrows
+(define (m5p1-shift y1 y2 n p hi lo d1 d2)
+ (let ((m (if (< p 0) (/ n (expt 10 (- p))) (* n (expt 10 p)))) (tp (m5p1-top n)))
+  (m5p1-chart y1 n hi lo d1 99)
+  (m5p1-chart y2 m hi lo d2 99)
+  (for-range d1 (+ tp 1)
+   (lambda (k)
+    (if (and (<= (+ k p) hi) (>= (+ k p) lo))
+     (arrow (m5p1-cx k hi lo) (+ y1 66) (m5p1-cx (+ k p) hi lo) (- y2 2) 'ink 1))))))
+
+; number line, a tick every step, labels every `every` with d decimals
+(define (m5p1-nl x0 x1 y from to step every d)
+ (set! %nl (list x0 x1 y from to))
+ (line (- x0 6) y (+ x1 6) y 'ink 1.5)
+ (let loop ((i 0))
+  (let ((v (+ from (* i step))))
+   (if (<= v (+ to (* step 0.01)))
+    (let ((x (nl-x v)) (b (near-whole? (/ (- v from) every))))
+     (line x (- y (if b 6 3)) x (+ y (if b 6 3)) 'ink 1)
+     (if b (text x (+ y 18) (if (= d 0) (m5p1-num v) (fmt v d)) 'centre 'small))
+     (loop (+ i 1)))))))
+
+; line from..to, the step at c drawn below in 10
+(define (m5p1-zoom y from to step ev c d)
+ (let ((a (lerp 20 300 (/ (- c from) (- to from)))) (b (lerp 20 300 (/ (- (+ c step) from) (- to from)))))
+  (rect a (- y 5) (- b a) 10 'grey)
+  (line a (+ y 6) 20 (+ y 64) 'grey 1)
+  (line b (+ y 6) 300 (+ y 64) 'grey 1))
+ (m5p1-nl 20 300 y from to step ev d)
+ (m5p1-nl 20 300 (+ y 80) c (+ c step) (/ step 10) step (+ d 1)))
+
+; 10 x 10 square, n hundredths shaded
+(define (m5p1-hund x y s n role)
+ (let ((c (quotient n 10)) (r (modulo n 10)))
+  (if (> c 0) (rect x y (* c s) (* 10 s) role))
+  (if (> r 0) (rect (+ x (* c s)) y s (* r s) role))
+  (if (> n 0) (for-range 1 10 (lambda (i)
+   (line (+ x (* i s)) y (+ x (* i s)) (+ y (* 10 s)) 'paper 3)
+   (line x (+ y (* i s)) (+ x (* 10 s)) (+ y (* i s)) 'paper 3))))
+  (grid x y 10 10 s)
+  (frame x y (* 10 s) (* 10 s) 'ink 2)))
+
+; the digits of s, the last at rx, d apart, commas kept
+(define (m5p1-digits s rx y d size b)
+ (let ((m (string-length s)))
+  (for-range 0 m
+   (lambda (i) (label (- rx (* d (- m 1 i))) y (substring s i (+ i 1)) size b)))))
+
+; top x bottom, carries, k rows, sum
+(define (m5p1-mult rx y top bottom carry parts notes k)
+ (let ((n (length parts)) (w (- rx 100)))
+  (define (num v yy b) (m5p1-digits (fmt v 0) rx yy 16 'body b))
+  (let loop ((c (reverse carry)) (x rx))
+   (if (pair? c) (begin (label x (- y 17) (car c) 'small) (loop (cdr c) (- x 16)))))
+  (num top y 'ink)
+  (num bottom (+ y 22) 'ink)
+  (label (+ w 8) (+ y 22) "×" 'body)
+  (line w (+ y 30) (+ rx 8) (+ y 30) 'ink 1.5)
+  (for-range 0 (min k n)
+   (lambda (i)
+    (num (list-ref parts i) (+ y 50 (* 22 i)) 'ink)
+    (text (+ rx 20) (+ y 50 (* 22 i)) (list-ref notes i) 'small)))
+  (if (and (> n 1) (>= k n))
+   (begin (line w (+ y 36 (* 22 n)) (+ rx 8) (+ y 36 (* 22 n)) 'ink 1.5)
+    (num (apply + parts) (+ y 56 (* 22 n)) 'bold)))))
+
+; sides in proportion, each at least t/5
+(define (m5p1-sz l t)
+ (let* ((v (map (lambda (c) (max (/ t 5) (/ (* t c) (apply + l)))) l)) (z (apply + v)))
+  (map (lambda (a) (/ (* a t) z)) v)))
+; area model: column and row numbers, the first k parts show products
+(define (m5p1-area x y w h cols rows k)
+ (let loop ((j 0) (cx x) (cs cols) (cw (m5p1-sz cols w)))
+  (if (pair? cs)
+   (let ((c (car cs)) (wj (car cw)))
+    (label (+ cx (/ wj 2)) (- y 6) (m5p1-num c) 'body 'bold)
+    (let row ((i 0) (ry y) (rs rows) (rh (m5p1-sz rows h)))
+     (if (pair? rs)
+      (let ((r (car rs)) (hi (car rh)))
+       (frame cx ry wj hi 'ink 1.5)
+       (if (= j 0) (text (- x 6) (+ ry (/ hi 2) 5) (m5p1-num r) 'right 'body 'bold))
+       (if (< (+ (* j (length rows)) i) k)
+        (label (+ cx (/ wj 2)) (+ ry (/ hi 2) 5) (m5p1-num (* c r)) 'small))
+       (row (+ i 1) (+ ry hi) (cdr rs) (cdr rh)))))
+    (loop (+ j 1) (+ cx wj) (cdr cs) (cdr cw)))))
+ (caption "not to scale"))
+
+; n ÷ d: first k groups taken away
+(define (m5p1-quot rx y n d steps k)
+ (let loop ((s steps) (i 0) (left n) (yy y))
+  (m5p1-digits (m5p1-num left) rx yy 14 'body (if (= i k) 'bold 'ink))
+  (if (and (pair? s) (< i k))
+   (let ((t (* d (car s))))
+    (m5p1-digits (m5p1-num t) rx (+ yy 18) 14 'body 'ink)
+    (label (- rx 76) (+ yy 18) "-" 'body)
+    (text (+ rx 18) (+ yy 18) (string-append (m5p1-num (car s)) " × " (fmt d 0)) 'small)
+    (line (- rx 82) (+ yy 24) (+ rx 8) (+ yy 24) 'ink 1.5)
+    (loop (cdr s) (+ i 1) (- left t) (+ yy 40))))))
